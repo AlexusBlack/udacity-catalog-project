@@ -1,6 +1,9 @@
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, abort, session
+import string, random
 
 app = Flask(__name__) 
+app.secret_key = 'KJKxXXPKSks75g4W'
+
 
 user = {
     'authorized': True,
@@ -85,10 +88,29 @@ def categories_route():
 
 @app.route('/category/add', methods = ['GET'])
 def category_add_route():
+    csrf = generate_csrf_token()
     return render_template('category_edit.html', page={
         'title': 'Add category'
     }, user=user, content={
-        'is_edit': False
+        'is_edit': False,
+        'csrf_token': csrf
+    })
+
+@app.route('/category/<int:category_id>/edit', methods = ['GET'])
+def category_edit_route(category_id):
+    target_category = get_category(category_id)
+
+    if target_category is None:
+        abort(404)
+
+    csrf = generate_csrf_token()
+    
+    return render_template('category_edit.html', page={
+        'title': 'Add category'
+    }, user=user, content={
+        'is_edit': True,
+        'csrf_token': csrf,
+        'category': target_category
     })
 
 @app.route('/category/<int:category_id>', methods = ['GET'])
@@ -141,6 +163,14 @@ def get_item(item_id):
                 break
 
     return target_item
+
+def generate_csrf_token():
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = pw_gen(12)
+    return session['_csrf_token']
+
+def pw_gen(size = 8, chars=string.ascii_letters + string.digits + string.punctuation):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 
 if __name__ == '__main__':

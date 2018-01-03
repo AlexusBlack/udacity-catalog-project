@@ -5,13 +5,16 @@
   {% else %}
   <h1>Add category</h1>
   {% endif %}
-  <form>
+  <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ content.csrf_token }}">
     {% if content.is_edit %}
-    <input type="hidden" name="id" value="{{ content.category_id }}">
+    <input type="hidden" name="id" value="{{ content.category.id }}">
     {% endif %}
     <div class="form-group">
       <label for="inputCategoryName">Category name</label>
-      <input type="email" class="form-control" id="inputCategoryName" placeholder="Enter category name">
+      <input type="text" name="name" class="form-control" id="inputCategoryName" 
+        placeholder="Enter category name" 
+        value="{% if content.is_edit %}{{ content.category.name }}{% endif %}">
     </div>
     <button type="submit" class="btn btn-primary">
       {% if content.is_edit %}
