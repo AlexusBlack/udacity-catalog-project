@@ -1,0 +1,9 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h1>Index</h1>
+  <p>
+    {% for category in content.categories %}
+    <a href="/category/{{ category.id }}" class="list-group-item">{{ category.name }}</a>
+    {% endfor %}
+  </p>
+{% endblock %}

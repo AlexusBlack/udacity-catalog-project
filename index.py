@@ -43,13 +43,13 @@ def index_route():
         'categories': categories
     })
 
-# @app.route('/categories', methods = ['GET'])
-# def categories_route():
-#     return render_template('index.html', page={
-#         'title': 'Categories'
-#     }, user=user, content={
-#         'categories': categories
-#     })
+@app.route('/categories', methods = ['GET'])
+def categories_route():
+    return render_template('categories.html', page={
+        'title': 'Categories'
+    }, user=user, content={
+        'categories': categories
+    })
 
 
 if __name__ == '__main__':

@@ -16,15 +16,8 @@
 {% endblock %}
 {% block sidebar %}
 <div class="list-group">
-  <!-- <a href="#" class="list-group-item active">Link</a> -->
   {% for category in content.categories %}
   <a href="/category/{{ category.id }}" class="list-group-item">{{ category.name }}</a>
   {% endfor %}
-  <!-- <a href="#" class="list-group-item">Characters</a>
-  <a href="#" class="list-group-item">Planets</a>
-  <a href="#" class="list-group-item">Space Ships</a>
-  <a href="#" class="list-group-item">Races</a>
-  <a href="#" class="list-group-item">Factions</a>
-  <a href="#" class="list-group-item">Technologies</a> -->
 </div>
 {% endblock %}
