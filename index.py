@@ -93,26 +93,54 @@ def category_add_route():
 
 @app.route('/category/<int:category_id>', methods = ['GET'])
 def category_route(category_id):
-    target_category=None
-    print(categories)
+    target_category = get_category(category_id)
+
+    if target_category is None:
+        abort(404)
+
+    return render_template('category.html', page={
+        'title': 'Category ' + target_category['name'],
+        'has_sidebar': True
+    }, user=user, content={
+        'categories': categories,
+        'category': target_category
+    })
+
+@app.route('/item/<int:item_id>', methods = ['GET'])
+def item_route(item_id):
+    target_item = get_item(item_id)
+
+    if target_item is None:
+        abort(404)
+
+    return render_template('item.html', page={
+        'title': 'Item ' + target_item['name'],
+        'has_sidebar': True
+    }, user=user, content={
+        'categories': categories,
+        'item': target_item
+    })
+
+def get_category(category_id):
+    target_category = None
+
     for category in categories:
         if category['id'] == category_id:
             target_category = category
             break
-    
-    if target_category == None:
-        abort(404)
 
+    return target_category
 
-    return render_template('category.html', page={
-        'title': 'Add category',
-        'has_sidebar': True
-    }, user=user, content={
-        'categories': categories,
-        'category_id': target_category['id'],
-        'category_name': target_category['name'],
-        'category_items': target_category['items']
-    })
+def get_item(item_id):
+    target_item = None
+
+    for category in categories:
+        for item in category['items']:
+            if item['id'] == item_id:
+                target_item = item
+                break
+
+    return target_item
 
 
 if __name__ == '__main__':

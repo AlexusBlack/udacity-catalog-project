@@ -1,5 +1,6 @@
 {% extends "layout.html" %}
 {% block sidebar %}
+<h3>Categories</h3>
 <div class="list-group">
   {% for category in content.categories %}
   <a href="/category/{{ category.id }}" class="list-group-item">{{ category.name }}</a>
