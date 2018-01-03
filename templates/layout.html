@@ -33,7 +33,7 @@
 
     <span class="user-box">
       {% if user.authorized %}
-      {{ user.name }} (<a href="/logout">Logout</a>)
+      {{ user.name }} (<a href="/profile">Profile</a> | <a href="/logout">Logout</a>)
       {% else %}
       <a class="nav-link" href="/login">Login</a>
       {% endif %}

@@ -1,0 +1,16 @@
+{% extends "layout_with_sidebar.html" %}
+{% block content %}
+  <h1>Category: {{ content.category_name }}</h1>
+  {% if user.authorized %}
+  <p>
+    <a href="/category/{{ content.category_id }}/add" class="btn btn-primary">Add Item</a>
+    <a href="/category/{{ content.category_id }}/edit" class="btn btn-secondary">Edit Category</a>
+    <a href="/category/{{ content.category_id }}/delete" class="btn btn-danger">Delete Category</a>
+  </p>
+  {% endif %}
+  <p>
+      {% for item in content.category_items %}
+      <a href="/item/{{ item.id }}" class="list-group-item">{{ item.name }}</a>
+      {% endfor %}
+  </p>
+{% endblock %}

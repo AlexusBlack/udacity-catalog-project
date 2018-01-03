@@ -1,10 +1,10 @@
-{% extends "layout.html" %}
+{% extends "layout_with_sidebar.html" %}
 {% block content %}
     <h1>Index</h1>
     <p class="important">
       Welcome to The Orville database.
     </p>
-    <p>he Orville is a live-action, one-hour space adventure series set 400 years in the future that follows The Orville, a mid-level exploratory spaceship. Its crew, both human and alien, face the wonders and dangers of outer space, while also dealing with the familiar, often humorous problems of everyday life. </p>
+    <p>The Orville is a live-action, one-hour space adventure series set 400 years in the future that follows The Orville, a mid-level exploratory spaceship. Its crew, both human and alien, face the wonders and dangers of outer space, while also dealing with the familiar, often humorous problems of everyday life. </p>
     <h2>Services</h2>
     <p>On this website you can find various information available in various forms
       <ul>
@@ -13,11 +13,4 @@
       </ul>
     </p>
     <img src="{{ url_for('static', filename='images/logo.png') }}" width="250">
-{% endblock %}
-{% block sidebar %}
-<div class="list-group">
-  {% for category in content.categories %}
-  <a href="/category/{{ category.id }}" class="list-group-item">{{ category.name }}</a>
-  {% endfor %}
-</div>
 {% endblock %}
