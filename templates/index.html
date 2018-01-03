@@ -2,6 +2,29 @@
 {% block content %}
     <h1>Index</h1>
     <p class="important">
-      Welcome to The Orville database
+      Welcome to The Orville database.
     </p>
+    <p>he Orville is a live-action, one-hour space adventure series set 400 years in the future that follows The Orville, a mid-level exploratory spaceship. Its crew, both human and alien, face the wonders and dangers of outer space, while also dealing with the familiar, often humorous problems of everyday life. </p>
+    <h2>Services</h2>
+    <p>On this website you can find various information available in various forms
+      <ul>
+        <li>Human redable - just browse our website normally</li>
+        <li>API access - all info can be accessed or modified through our REST API</li>
+      </ul>
+    </p>
+    <img src="{{ url_for('static', filename='images/logo.png') }}" width="250">
+{% endblock %}
+{% block sidebar %}
+<div class="list-group">
+  <!-- <a href="#" class="list-group-item active">Link</a> -->
+  {% for category in content.categories %}
+  <a href="/category/{{ category.id }}" class="list-group-item">{{ category.name }}</a>
+  {% endfor %}
+  <!-- <a href="#" class="list-group-item">Characters</a>
+  <a href="#" class="list-group-item">Planets</a>
+  <a href="#" class="list-group-item">Space Ships</a>
+  <a href="#" class="list-group-item">Races</a>
+  <a href="#" class="list-group-item">Factions</a>
+  <a href="#" class="list-group-item">Technologies</a> -->
+</div>
 {% endblock %}
