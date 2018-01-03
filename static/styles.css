@@ -1,0 +1,8 @@
+.user-box {
+  color: white;
+}
+
+.user-box a {
+  color: inherit;
+  text-decoration: underline;
+}

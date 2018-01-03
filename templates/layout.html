@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>{% block title %}{% endblock %} - The Orville DB</title>
+  <title>{% block title %}{{page.title}}{% endblock %} - The Orville DB</title>
 
   {% block head %}
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename='offcanvas.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   {% endblock %}
 </head>
 <body>
@@ -29,6 +30,14 @@
         </li>
       </ul>
     </div>
+
+    <span class="user-box">
+      {% if user.authorized %}
+      {{ user.name }} (<a href="#">Logout</a>)
+      {% else %}
+      <a class="nav-link" href="#">Login</a>
+      {% endif %}
+    </span>
   </nav>
 
   <main role="main" class="container">
