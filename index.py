@@ -1,73 +1,10 @@
 from flask import Flask, render_template, abort, session
-import string, random
+from orvSecurity import generate_csrf_token
+from orvData import user, categories
+from orvTools import get_category, get_item
 
 app = Flask(__name__) 
 app.secret_key = 'KJKxXXPKSks75g4W'
-
-
-user = {
-    'authorized': True,
-    'name': 'Alex Chernov'
-}
-
-categories = [
-    {
-        'id': 0,
-        'name': 'Characters',
-        'items': [
-            {
-                'id': 0,
-                'name': 'Captain Ed Mercer',
-                'description': """
-Ed Mercer is the Human captain of the USS Orville.
-He is portrayed by Seth MacFarlane.""",
-                'author': 0
-            },
-            {
-                'id': 1,
-                'name': 'Commander Kelly Grayson',
-                'description': """
-Kelly Grayson is a Commander and First Officer of the USS Orville.""",
-                'author': 0
-            },
-            {
-                'id': 2,
-                'name': 'Lt. Commander Bortus',
-                'description': """
-Bortus is a Moclan crew member of the The Orville. 
-He comes from a single gender species with cultural and behavioral attitudes that are quite different from other species that are members of the Planetary Union. 
-For this reason, Captain Mercer and the rest of The Orville's crew aren't quite sure how to communicate with him.
-He has a mate named Klyden who lives onboard the ship alongside him, with their son Topa.""",
-                'author': 0
-            }
-        ]
-    },
-    {
-        'id': 1,
-        'name': 'Planets',
-        'items': []
-    },
-    {
-        'id': 2,
-        'name': 'Space Ships',
-        'items': []
-    },
-    {
-        'id': 3,
-        'name': 'Races',
-        'items': []
-    },
-    {
-        'id': 4,
-        'name': 'Factions',
-        'items': []
-    },
-    {
-        'id': 5,
-        'name': 'Technologies',
-        'items': []
-    }
-]
 
 @app.route('/', methods = ['GET'])
 def index_route():
@@ -142,36 +79,6 @@ def item_route(item_id):
         'categories': categories,
         'item': target_item
     })
-
-def get_category(category_id):
-    target_category = None
-
-    for category in categories:
-        if category['id'] == category_id:
-            target_category = category
-            break
-
-    return target_category
-
-def get_item(item_id):
-    target_item = None
-
-    for category in categories:
-        for item in category['items']:
-            if item['id'] == item_id:
-                target_item = item
-                break
-
-    return target_item
-
-def generate_csrf_token():
-    if '_csrf_token' not in session:
-        session['_csrf_token'] = pw_gen(12)
-    return session['_csrf_token']
-
-def pw_gen(size = 8, chars=string.ascii_letters + string.digits + string.punctuation):
-    return ''.join(random.choice(chars) for _ in range(size))
-
 
 if __name__ == '__main__':
     app.debug = True #False
