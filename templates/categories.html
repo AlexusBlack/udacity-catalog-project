@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
   <h1>Index</h1>
+  {% if user.authorized %}
+  <p><a href="/category/add" class="btn btn-primary">Add Category</a></p>
+  {% endif %}
   <p>
     {% for category in content.categories %}
     <a href="/category/{{ category.id }}" class="list-group-item">{{ category.name }}</a>
