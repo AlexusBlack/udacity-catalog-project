@@ -1,9 +1,3 @@
-user = {
-    'authorized': True,
-    'id': 0,
-    'name': 'Alex Chernov'
-}
-
 categories = [
     {
         'id': 0,
