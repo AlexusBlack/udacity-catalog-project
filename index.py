@@ -1,6 +1,6 @@
-from flask import Flask, render_template, abort, session
+from flask import Flask, render_template, abort, session, request, flash, redirect, url_for
 from orvSecurity import generate_csrf_token
-from orvData import user, categories
+from orvData import user, categories, next_category_id
 from orvTools import get_category, get_item
 
 app = Flask(__name__) 
@@ -23,17 +23,27 @@ def categories_route():
         'categories': categories
     })
 
-@app.route('/category/add', methods = ['GET'])
+@app.route('/category/add', methods = ['GET', 'POST'])
 def category_add_route():
     csrf = generate_csrf_token()
-    return render_template('category_edit.html', page={
-        'title': 'Add category'
-    }, user=user, content={
-        'is_edit': False,
-        'csrf_token': csrf
-    })
 
-@app.route('/category/<int:category_id>/edit', methods = ['GET'])
+    if request.method == 'POST':
+        if csrf != request.form['csrf_token']:
+            abort(403)
+        else:
+            add_category()
+            flash('Category added')
+            return redirect(url_for('categories_route'))
+
+    if request.method == 'GET':
+        return render_template('category_edit.html', page={
+            'title': 'Add category'
+        }, user=user, content={
+            'is_edit': False,
+            'csrf_token': csrf
+        })
+
+@app.route('/category/<int:category_id>/edit', methods = ['GET', 'POST'])
 def category_edit_route(category_id):
     target_category = get_category(category_id)
 
@@ -41,14 +51,48 @@ def category_edit_route(category_id):
         abort(404)
 
     csrf = generate_csrf_token()
+
+    if request.method == 'POST':
+        if csrf != request.form['csrf_token']:
+            abort(403)
+        else:
+            update_category(category_id)
+            flash('Category updated')
+            return redirect(url_for('categories_route'))
     
-    return render_template('category_edit.html', page={
-        'title': 'Add category'
-    }, user=user, content={
-        'is_edit': True,
-        'csrf_token': csrf,
-        'category': target_category
-    })
+    if request.method == 'GET':
+        return render_template('category_edit.html', page={
+            'title': 'Add category'
+        }, user=user, content={
+            'is_edit': True,
+            'csrf_token': csrf,
+            'category': target_category
+        })
+
+@app.route('/category/<int:category_id>/delete', methods = ['GET', 'POST'])
+def category_delete_route(category_id):
+    target_category = get_category(category_id)
+
+    if target_category is None:
+        abort(404)
+
+    csrf = generate_csrf_token()
+
+    if request.method == 'POST':
+        if csrf != request.form['csrf_token']:
+            abort(403)
+        else:
+            delete_category(category_id)
+            flash('Category deleted')
+            return redirect(url_for('categories_route'))
+
+    if request.method == 'GET':
+        return render_template('confirm.html', page={
+            'title': 'Delete category'
+        }, user=user, content={
+            'csrf_token': csrf,
+            'message': 'Do you really want delete category ' + target_category['name'] + '?'
+        })
 
 @app.route('/category/<int:category_id>', methods = ['GET'])
 def category_route(category_id):
@@ -79,6 +123,32 @@ def item_route(item_id):
         'categories': categories,
         'item': target_item
     })
+
+def add_category():
+    global next_category_id, categories
+    name = request.form['name']
+    
+    categories.append({
+        'id': next_category_id,
+        'name': name,
+        'items': []
+    })
+    next_category_id += 1
+
+def update_category(category_id):
+    global categories
+    name = request.form['name']
+
+    for index, category in enumerate(categories):
+        if category['id'] == category_id:
+            categories[index]['name'] = name
+
+def delete_category(category_id):
+    global categories
+
+    for index, category in enumerate(categories):
+        if category['id'] == category_id:
+            del categories[index]
 
 if __name__ == '__main__':
     app.debug = True #False

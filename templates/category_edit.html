@@ -7,9 +7,6 @@
   {% endif %}
   <form method="POST">
     <input type="hidden" name="csrf_token" value="{{ content.csrf_token }}">
-    {% if content.is_edit %}
-    <input type="hidden" name="id" value="{{ content.category.id }}">
-    {% endif %}
     <div class="form-group">
       <label for="inputCategoryName">Category name</label>
       <input type="text" name="name" class="form-control" id="inputCategoryName" 
@@ -23,5 +20,6 @@
       Add
       {% endif %}
     </button>
+    <button type="button" onclick="window.history.back()" class="btn btn-secondary">Cancel</button>
   </form>
 {% endblock %}

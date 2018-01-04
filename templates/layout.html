@@ -42,6 +42,14 @@
 
   <main role="main" class="container">
 
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-primary" role="alert">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
     <div class="row row-offcanvas row-offcanvas-right">
 
       {% if page.has_sidebar %}

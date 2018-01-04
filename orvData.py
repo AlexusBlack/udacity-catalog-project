@@ -61,3 +61,5 @@ He has a mate named Klyden who lives onboard the ship alongside him, with their 
         'items': []
     }
 ]
+
+next_category_id = 6
