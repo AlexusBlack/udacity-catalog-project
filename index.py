@@ -1,6 +1,7 @@
-import os
+import os, datetime
 
 from flask import Flask, render_template, abort, session, request, flash, redirect, url_for
+from hashlib import md5
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -10,7 +11,7 @@ from orvSecurity import generate_csrf_token
 from orvData import categories, next_category_id, next_item_id
 from orvTools import get_category, get_item
 
-app = Flask(__name__) 
+app = Flask(__name__)
 app.secret_key = 'KJKxXXPKSks75g4W'
 CLIENT_SECRETS_FILE = 'client_secret_701113834116-726adijgkns945m5l467eu6gu02lb18b.apps.googleusercontent.com.json'
 SCOPES = ['profile']
@@ -82,6 +83,20 @@ def oauth2callback():
 
     return redirect(url_for('index_route'))
 
+@app.route('/profile', methods = ['GET'])
+def profile_route():
+    user = user_info()
+
+    if not user['authorized']:
+        return redirect(url_for('login_route'))
+
+    return render_template('profile.html', page={
+        'title': user['name'] + ' profile'
+    }, user=user, content={
+        'categories': categories,
+        'api_key': get_api_key(user['id'])
+    })
+
 def credentials_to_dict(credentials):
     return {'token': credentials.token,
             'refresh_token': credentials.refresh_token,
@@ -140,7 +155,7 @@ def category_edit_route(category_id):
             update_category(category_id)
             flash('Category updated')
             return redirect(url_for('categories_route'))
-    
+
     if request.method == 'GET':
         return render_template('category_edit.html', page={
             'title': 'Add category'
@@ -381,6 +396,10 @@ def user_info():
     user['photo'] = session['user_photo']
 
     return user
+
+def get_api_key(user_id):
+    now = datetime.datetime.now()
+    return md5(user_id.encode('utf-8') + app.secret_key.encode('utf-8') + str(now.year).encode('utf-8') + str(now.month).encode('utf-8')).hexdigest()
 
 
 if __name__ == '__main__':
