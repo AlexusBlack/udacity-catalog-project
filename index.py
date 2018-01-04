@@ -1,6 +1,6 @@
 from flask import Flask, render_template, abort, session, request, flash, redirect, url_for
 from orvSecurity import generate_csrf_token
-from orvData import user, categories, next_category_id
+from orvData import user, categories, next_category_id, next_item_id
 from orvTools import get_category, get_item
 
 app = Flask(__name__) 
@@ -94,6 +94,32 @@ def category_delete_route(category_id):
             'message': 'Do you really want delete category ' + target_category['name'] + '?'
         })
 
+@app.route('/category/<int:category_id>/add', methods = ['GET', 'POST'])
+def item_add_route(category_id):
+    target_category = get_category(category_id)
+
+    if target_category is None:
+        abort(404)
+
+    csrf = generate_csrf_token()
+
+    if request.method == 'POST':
+        if csrf != request.form['csrf_token']:
+            abort(403)
+        else:
+            add_item(category_id)
+            flash('Item added')
+            return redirect(url_for('category_route', category_id=category_id))
+
+    if request.method == 'GET':
+        return render_template('item_edit.html', page={
+            'title': 'Add category'
+        }, user=user, content={
+            'is_edit': False,
+            'csrf_token': csrf,
+            'category': target_category
+        })
+
 @app.route('/category/<int:category_id>', methods = ['GET'])
 def category_route(category_id):
     target_category = get_category(category_id)
@@ -108,6 +134,57 @@ def category_route(category_id):
         'categories': categories,
         'category': target_category
     })
+
+@app.route('/item/<int:item_id>/edit', methods = ['GET', 'POST'])
+def item_edit_route(item_id):
+    target_item = get_item(item_id)
+
+    if target_item is None:
+        abort(404)
+
+    csrf = generate_csrf_token()
+
+    if request.method == 'POST':
+        if csrf != request.form['csrf_token']:
+            abort(403)
+        else:
+            update_item(item_id)
+            flash('Item updated')
+            return redirect(url_for('item_route', item_id=item_id))
+    
+    if request.method == 'GET':
+        return render_template('item_edit.html', page={
+            'title': 'Edit item'
+        }, user=user, content={
+            'is_edit': True,
+            'csrf_token': csrf,
+            'item': target_item
+        })
+
+@app.route('/item/<int:item_id>/delete', methods = ['GET', 'POST'])
+def item_delete_route(item_id):
+    target_item = get_item(item_id)
+
+    if target_item is None:
+        abort(404)
+
+    csrf = generate_csrf_token()
+
+    if request.method == 'POST':
+        if csrf != request.form['csrf_token']:
+            abort(403)
+        else:
+            delete_item(item_id)
+            flash('Item deleted')
+            return redirect(url_for('categories_route'))
+
+    if request.method == 'GET':
+        return render_template('confirm.html', page={
+            'title': 'Delete item'
+        }, user=user, content={
+            'csrf_token': csrf,
+            'message': 'Do you really want delete item ' + target_item['name'] + '?'
+        })
 
 @app.route('/item/<int:item_id>', methods = ['GET'])
 def item_route(item_id):
@@ -142,6 +219,7 @@ def update_category(category_id):
     for index, category in enumerate(categories):
         if category['id'] == category_id:
             categories[index]['name'] = name
+            break
 
 def delete_category(category_id):
     global categories
@@ -149,6 +227,54 @@ def delete_category(category_id):
     for index, category in enumerate(categories):
         if category['id'] == category_id:
             del categories[index]
+            break
+
+def add_item(category_id):
+    global next_item_id, categories
+    name = request.form['name']
+    description = request.form['description']
+
+    for index, category in enumerate(categories):
+        if category['id'] == category_id:
+            categories[index]['items'].append({
+                'id': next_item_id,
+                'name': name,
+                'description': description,
+                'author': user['id']
+            })
+            break
+
+    next_item_id += 1
+
+def update_item(item_id):
+    global categories
+    name = request.form['name']
+    description = request.form['description']
+
+    done = False
+    for category_index, category in enumerate(categories):
+        for item_index, item in enumerate(category['items']):
+            if item['id'] == item_id:
+                categories[category_index]['items'][item_index]['name'] = name
+                categories[category_index]['items'][item_index]['description'] = description
+                done = True
+                break
+        if done:
+            break
+
+def delete_item(item_id):
+    global categories
+
+    done = False
+    for category_index, category in enumerate(categories):
+        for item_index, item in enumerate(category['items']):
+            if item['id'] == item_id:
+                del categories[category_index]['items'][item_index]
+                done = True
+                break
+        if done:
+            break
+
 
 if __name__ == '__main__':
     app.debug = True #False

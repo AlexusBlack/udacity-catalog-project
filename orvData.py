@@ -1,5 +1,6 @@
 user = {
     'authorized': True,
+    'id': 0,
     'name': 'Alex Chernov'
 }
 
@@ -63,3 +64,4 @@ He has a mate named Klyden who lives onboard the ship alongside him, with their 
 ]
 
 next_category_id = 6
+next_item_id = 3
