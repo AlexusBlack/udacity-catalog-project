@@ -1,10 +1,10 @@
 import os
 
-from flask import Flask, render_template, abort, session, request, flash, redirect, url_for
+from flask import Flask, jsonify, render_template, abort, request, flash, redirect, url_for
 
 from security import generate_csrf_token, get_api_key
 from orvData import categories, next_category_id, next_item_id
-from tools import *
+from tools import user_is_authorized, user_info, get_category, get_item
 
 from auth import auth_system
 
@@ -42,6 +42,10 @@ def categories_route():
     }, user=user_info(), content={
         'categories': categories
     })
+
+@app.route('/api/v1/categories', methods = ['GET'])
+def categories_api():
+    return jsonify(categories)
 
 @app.route('/category/add', methods = ['GET', 'POST'])
 def category_add_route():
@@ -167,6 +171,14 @@ def category_route(category_id):
         'category': target_category
     })
 
+@app.route('/api/v1/category/<int:category_id>', methods = ['GET'])
+def categoriy_api(category_id):
+    target_category = get_category(category_id)
+
+    if target_category is None:
+        abort(404)
+    return jsonify(target_category)
+
 @app.route('/item/<int:item_id>/edit', methods = ['GET', 'POST'])
 def item_edit_route(item_id):
     if not user_is_authorized():
@@ -238,6 +250,14 @@ def item_route(item_id):
         'categories': categories,
         'item': target_item
     })
+
+@app.route('/api/v1/item/<int:item_id>', methods = ['GET'])
+def item_api(item_id):
+    target_item = get_item(item_id)
+
+    if target_item is None:
+        abort(404)
+    return jsonify(target_item)
 
 def add_category():
     global next_category_id, categories
