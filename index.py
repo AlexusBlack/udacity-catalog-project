@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template, abort, session, request, flash, redirect, url_for
 
-from orvSecurity import generate_csrf_token
+from security import generate_csrf_token, get_api_key
 from orvData import categories, next_category_id, next_item_id
 from tools import *
 
@@ -25,7 +25,7 @@ def index_route():
 def profile_route():
     user = user_info()
 
-    if not user['authorized']:
+    if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
     return render_template('profile.html', page={
@@ -45,7 +45,7 @@ def categories_route():
 
 @app.route('/category/add', methods = ['GET', 'POST'])
 def category_add_route():
-    if 'credentials' not in session:
+    if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
     csrf = generate_csrf_token()
@@ -68,7 +68,7 @@ def category_add_route():
 
 @app.route('/category/<int:category_id>/edit', methods = ['GET', 'POST'])
 def category_edit_route(category_id):
-    if 'credentials' not in session:
+    if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
     target_category = get_category(category_id)
@@ -97,7 +97,7 @@ def category_edit_route(category_id):
 
 @app.route('/category/<int:category_id>/delete', methods = ['GET', 'POST'])
 def category_delete_route(category_id):
-    if 'credentials' not in session:
+    if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
     target_category = get_category(category_id)
@@ -125,7 +125,7 @@ def category_delete_route(category_id):
 
 @app.route('/category/<int:category_id>/add', methods = ['GET', 'POST'])
 def item_add_route(category_id):
-    if 'credentials' not in session:
+    if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
     target_category = get_category(category_id)
@@ -169,7 +169,7 @@ def category_route(category_id):
 
 @app.route('/item/<int:item_id>/edit', methods = ['GET', 'POST'])
 def item_edit_route(item_id):
-    if 'credentials' not in session:
+    if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
     target_item = get_item(item_id)
@@ -198,7 +198,7 @@ def item_edit_route(item_id):
 
 @app.route('/item/<int:item_id>/delete', methods = ['GET', 'POST'])
 def item_delete_route(item_id):
-    if 'credentials' not in session:
+    if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
     target_item = get_item(item_id)

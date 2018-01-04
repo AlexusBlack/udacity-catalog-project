@@ -3,7 +3,7 @@ import google_auth_oauthlib.flow
 import googleapiclient.discovery
 
 from flask import Blueprint, url_for, session, redirect, flash, request, render_template
-from tools import credentials_to_dict
+from security import credentials_to_dict
 
 CLIENT_SECRETS_FILE = 'client_secret_701113834116-726adijgkns945m5l467eu6gu02lb18b.apps.googleusercontent.com.json'
 SCOPES = ['profile']
