@@ -5,3 +5,4 @@ from sqlalchemy.orm import sessionmaker
 engine = create_engine('postgresql:///catalog')
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
+session = Session()

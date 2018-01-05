@@ -13,13 +13,6 @@ def generate_csrf_token():
 def generate_password(size = 8, chars=string.ascii_letters + string.digits + string.punctuation):
     return ''.join(random.choice(chars) for _ in range(size))
 
-def get_api_key(user_id, secret_key):
-    now = datetime.datetime.now()
-    return hashlib.md5(user_id.encode('utf-8') +
-                       secret_key.encode('utf-8') +
-                       str(now.year).encode('utf-8') +
-                       str(now.month).encode('utf-8')).hexdigest()
-
 def credentials_to_dict(credentials):
     return {'token': credentials.token,
             'refresh_token': credentials.refresh_token,

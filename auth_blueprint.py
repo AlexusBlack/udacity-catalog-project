@@ -8,13 +8,13 @@ from security import credentials_to_dict
 CLIENT_SECRETS_FILE = 'client_secret_701113834116-726adijgkns945m5l467eu6gu02lb18b.apps.googleusercontent.com.json'
 SCOPES = ['profile']
 
-auth_system = Blueprint('auth_system', __name__, template_folder='templates')
+auth = Blueprint('auth', __name__, template_folder='templates')
 
-@auth_system.route('/login', methods = ['GET'])
+@auth.route('/login', methods = ['GET'])
 def login_route():
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES)
-    flow.redirect_uri = url_for('auth_system.oauth2callback', _external=True)
+    flow.redirect_uri = url_for('auth.oauth2callback', _external=True)
 
     authorization_url, state = flow.authorization_url(
         access_type='offline',
@@ -24,14 +24,14 @@ def login_route():
 
     return redirect(authorization_url)
 
-@auth_system.route('/logout', methods = ['GET'])
+@auth.route('/logout', methods = ['GET'])
 def logout_route():
     if 'credentials' in session:
         del session['credentials']
     flash('You logged out')
     return redirect(url_for('index_route'))
 
-@auth_system.route('/oauth2callback')
+@auth.route('/oauth2callback')
 def oauth2callback():
     # Specify the state when creating the flow in the callback so that it can
     # verified in the authorization server response.
@@ -39,7 +39,7 @@ def oauth2callback():
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-    flow.redirect_uri = url_for('auth_system.oauth2callback', _external=True)
+    flow.redirect_uri = url_for('auth.oauth2callback', _external=True)
 
     # Use the authorization server's response to fetch the OAuth 2.0 tokens.
     authorization_response = request.url
