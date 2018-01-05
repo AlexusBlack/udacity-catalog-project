@@ -1,3 +1,7 @@
+"""
+Item routes
+"""
+
 from flask import Blueprint, url_for, render_template, abort, flash, redirect, request
 
 from security import generate_csrf_token
@@ -7,6 +11,10 @@ item = Blueprint('item', __name__, template_folder='templates')
 
 @item.route('/item/<int:item_id>/edit', methods = ['GET', 'POST'])
 def item_edit_route(item_id):
+    """
+    Route to edit item
+    """
+    # user must be authorised
     if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
@@ -15,6 +23,7 @@ def item_edit_route(item_id):
     if target_item is None:
         abort(404)
 
+    # some protection
     csrf = generate_csrf_token()
 
     if request.method == 'POST':
@@ -23,8 +32,9 @@ def item_edit_route(item_id):
         else:
             update_item(item_id)
             flash('Item updated')
+            # sending user to item page after edit is done
             return redirect(url_for('item.item_route', item_id=item_id))
-    
+
     if request.method == 'GET':
         return render_template('item_edit.html', page={
             'title': 'Edit item'
@@ -36,6 +46,10 @@ def item_edit_route(item_id):
 
 @item.route('/item/<int:item_id>/delete', methods = ['GET', 'POST'])
 def item_delete_route(item_id):
+    """
+    Route to delete item
+    """
+    # user must be authorized
     if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
@@ -44,6 +58,7 @@ def item_delete_route(item_id):
     if target_item is None:
         abort(404)
 
+    # some protection
     csrf = generate_csrf_token()
 
     if request.method == 'POST':
@@ -52,6 +67,7 @@ def item_delete_route(item_id):
         else:
             delete_item(item_id)
             flash('Item deleted')
+            # sending user to categories page for he has done
             return redirect(url_for('category.categories_route'))
 
     if request.method == 'GET':
@@ -64,6 +80,9 @@ def item_delete_route(item_id):
 
 @item.route('/item/<int:item_id>', methods = ['GET'])
 def item_route(item_id):
+    """
+    Route that outputs item info
+    """
     target_item = get_item(item_id)
 
     if target_item is None:
@@ -79,6 +98,10 @@ def item_route(item_id):
 
 @item.route('/category/<int:category_id>/add', methods = ['GET', 'POST'])
 def item_add_route(category_id):
+    """
+    Route to add new item
+    """
+    # user must be authorised
     if not user_is_authorized():
         return redirect(url_for('auth_system.login_route'))
 
@@ -87,6 +110,7 @@ def item_add_route(category_id):
     if target_category is None:
         abort(404)
 
+    # adding some protection
     csrf = generate_csrf_token()
 
     if request.method == 'POST':

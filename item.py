@@ -1,7 +1,14 @@
+"""
+ORM mapping to items table
+"""
+
 from sqlalchemy import Column, String, Integer, ForeignKey
 from base import Base
 
 class Item(Base):
+    """
+    Represents single row in items table
+    """
     __tablename__ = 'items'
 
     id = Column(Integer, primary_key=True)
@@ -14,8 +21,11 @@ class Item(Base):
         self.description = description
 
     def serialize(self):
+        """
+        We need to serialize the object for our API endpoints
+        """
         return {
-            'id': self.id, 
+            'id': self.id,
             'name': self.name,
             'description': self.description,
             'category_id': self.category_id

@@ -4,6 +4,8 @@ import sys
 from flask import Flask, render_template, redirect, url_for
 from tools import user_is_authorized, user_info, get_categories
 
+# our routes storred as blueprints
+# for better code distribution and reusability
 from auth_blueprint import auth
 from category_blueprint import category
 from item_blueprint import item
@@ -18,6 +20,9 @@ app.register_blueprint(api)
 
 @app.route('/', methods = ['GET'])
 def index_route():
+    """
+    Home sweet home, this is page where our journey begins
+    """
     return render_template('index.html', page={
         'title': 'Homepage',
         'has_sidebar': True
@@ -27,6 +32,12 @@ def index_route():
 
 @app.route('/profile', methods = ['GET'])
 def profile_route():
+    """
+    Originaly I planned to make it big and coolm with API key to update and delete stuff,
+    with nice API reference and so on.
+    Then I understood that this is overkill, 
+    so this page is very simple and just shows user's picture.
+    """
     user = user_info()
 
     if not user_is_authorized():

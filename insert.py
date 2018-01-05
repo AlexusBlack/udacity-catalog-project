@@ -1,3 +1,8 @@
+"""
+Some data to populate our database with, take from
+http://orville.wikia.com/wiki/The_Orville_Wiki
+"""
+
 from category import Category
 from item import Item
 

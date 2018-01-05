@@ -1,15 +1,22 @@
+"""
+Set of tools that provides us additional abstration layer on top of database
+and other useful functions
+"""
+
 import flask
-from hashlib import md5
 
 from item import Item
 from category import Category
 from base import session
 
 def user_info():
+    """
+    General use user information
+    """
     user = {
         'authorized': False
     }
-    if 'credentials' not in flask.session:
+    if not user_is_authorized():
         return user
 
     user['authorized'] = True
@@ -20,18 +27,31 @@ def user_info():
     return user
 
 def user_is_authorized():
+    """
+    Simple check if user is authorized
+    """
     return 'credentials' in flask.session
 
 def get_categories():
+    """
+    Getting categories list out of DB
+    """
     categories = session.query(Category).all()
     return categories
 
 def get_category(category_id):
+    """
+    Getting single category out of DB by id
+    """
     target_category = session.query(Category).get(category_id)
 
     return target_category
 
 def add_category():
+    """
+    Adding new category to DB with fields from request form
+    * better replace with arguments, to make method more independent
+    """
     name = flask.request.form['name']
     new_category = Category(name)
 
@@ -39,6 +59,10 @@ def add_category():
     session.commit()
 
 def update_category(category_id):
+    """
+    Updating category in DB with fields from request form
+    * better replace with arguments, to make method more independent
+    """
     name = flask.request.form['name']
     category_to_update = session.query(Category).get(category_id)
     category_to_update.name = name
@@ -47,14 +71,24 @@ def update_category(category_id):
     session.commit()
 
 def delete_category(category_id):
+    """
+    Deleting category by id
+    """
     session.query(Category).filter(Category.id == category_id).delete()
     session.commit()
 
 def get_item(item_id):
+    """
+    Retrieving item from DB by id
+    """
     target_item = session.query(Item).get(item_id)
     return target_item
 
 def add_item(category_id):
+    """
+    Adding item to DB with fields from request form
+    * better replace with arguments, to make method more independent
+    """
     name = flask.request.form['name']
     description = flask.request.form['description']
     new_item = Item(name, description)
@@ -64,6 +98,10 @@ def add_item(category_id):
     session.commit()
 
 def update_item(item_id):
+    """
+    Updating item in DB with fields from request form
+    * better replace with arguments, to make method more independent
+    """
     name = flask.request.form['name']
     description = flask.request.form['description']
 
@@ -75,5 +113,8 @@ def update_item(item_id):
     session.commit()
 
 def delete_item(item_id):
+    """
+    Deleting item in DB by id
+    """
     session.query(Item).filter(Item.id == item_id).delete()
     session.commit()
