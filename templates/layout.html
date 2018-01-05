@@ -15,7 +15,7 @@
 <body>
   
   <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">The Orville</a>
+    <a class="navbar-brand" href="{{ url_for('index_route') }}">The Orville</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsMenu" aria-controls="navbarsMenu" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -23,19 +23,19 @@
     <div class="collapse navbar-collapse" id="navbarsMenu">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="{{ url_for('index_route') }}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/categories">Categories</a>
+          <a class="nav-link" href="{{ url_for('category.categories_route') }}">Categories</a>
         </li>
       </ul>
     </div>
 
     <span class="user-box">
       {% if user.authorized %}
-      {{ user.name }} (<a href="/profile">Profile</a> | <a href="/logout">Logout</a>)
+      {{ user.name }} (<a href="{{ url_for('profile_route') }}">Profile</a> | <a href="{{ url_for('auth.logout_route') }}">Logout</a>)
       {% else %}
-      <a class="nav-link" href="/login">Login</a>
+      <a class="nav-link" href="{{ url_for('auth.login_route') }}">Login</a>
       {% endif %}
     </span>
   </nav>

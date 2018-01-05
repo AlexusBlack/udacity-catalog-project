@@ -3,14 +3,14 @@
   <h1>Category: {{ content.category.name }}</h1>
   {% if user.authorized %}
   <p>
-    <a href="/category/{{ content.category.id }}/add" class="btn btn-primary">Add Item</a>
-    <a href="/category/{{ content.category.id }}/edit" class="btn btn-secondary">Edit Category</a>
-    <a href="/category/{{ content.category.id }}/delete" class="btn btn-danger">Delete Category</a>
+    <a href="{{ url_for('category.category_add_route') }}" class="btn btn-primary">Add Item</a>
+    <a href="{{ url_for('category.category_edit_route', category_id=content.category.id) }}" class="btn btn-secondary">Edit Category</a>
+    <a href="{{ url_for('category.category_delete_route', category_id=content.category.id) }}" class="btn btn-danger">Delete Category</a>
   </p>
   {% endif %}
   <p>
       {% for item in content.category['items'] %}
-      <a href="/item/{{ item.id }}" class="list-group-item">{{ item.name }}</a>
+      <a href="{{ url_for('item.item_route', item_id=item.id) }}" class="list-group-item">{{ item.name }}</a>
       {% endfor %}
   </p>
 {% endblock %}
