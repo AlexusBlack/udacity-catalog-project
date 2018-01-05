@@ -1,7 +1,7 @@
 from category import Category
 from item import Item
 
-from index import Session, engine, Base
+from base import Session, engine, Base
 
 Base.metadata.create_all(engine)
 session = Session()

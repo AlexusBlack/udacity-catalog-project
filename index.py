@@ -1,23 +1,21 @@
 import os
 
 from flask import Flask, jsonify, render_template, abort, request, flash, redirect, url_for
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
 
 from security import generate_csrf_token, get_api_key
-from orvData import categories, next_category_id, next_item_id
-from tools import user_is_authorized, user_info, get_category, get_item
+from orvData import next_category_id, next_item_id
+from tools import user_is_authorized, user_info
 
+from base import Session
+from item import Item
+from category import Category
 from auth import auth_system
 
 app = Flask(__name__)
 app.secret_key = 'KJKxXXPKSks75g4W'
 app.register_blueprint(auth_system)
 
-engine = create_engine('postgresql:///catalog')
-Session = sessionmaker(bind=engine)
-Base = declarative_base()
+session = Session()
 
 @app.route('/', methods = ['GET'])
 def index_route():
@@ -25,7 +23,7 @@ def index_route():
         'title': 'Homepage',
         'has_sidebar': True
     }, user=user_info(), content={
-        'categories': categories
+        'categories': get_categories()
     })
 
 @app.route('/profile', methods = ['GET'])
@@ -38,8 +36,7 @@ def profile_route():
     return render_template('profile.html', page={
         'title': user['name'] + ' profile'
     }, user=user, content={
-        'categories': categories,
-        'api_key': get_api_key(user['id'], app.secret_key)
+        'categories': get_categories()
     })
 
 @app.route('/categories', methods = ['GET'])
@@ -47,12 +44,13 @@ def categories_route():
     return render_template('categories.html', page={
         'title': 'Categories'
     }, user=user_info(), content={
-        'categories': categories
+        'categories': get_categories()
     })
 
-@app.route('/api/v1/categories', methods = ['GET'])
+@app.route('/categories.json', methods = ['GET'])
 def categories_api():
-    return jsonify(categories)
+    plain_list = [e.serialize() for e in get_categories()]
+    return jsonify(plain_list)
 
 @app.route('/category/add', methods = ['GET', 'POST'])
 def category_add_route():
@@ -171,20 +169,25 @@ def category_route(category_id):
         abort(404)
 
     return render_template('category.html', page={
-        'title': 'Category ' + target_category['name'],
+        'title': 'Category ' + target_category.name,
         'has_sidebar': True
     }, user=user_info(), content={
-        'categories': categories,
+        'categories': get_categories(),
         'category': target_category
     })
 
-@app.route('/api/v1/category/<int:category_id>', methods = ['GET'])
+@app.route('/category/<int:category_id>.json', methods = ['GET'])
 def categoriy_api(category_id):
     target_category = get_category(category_id)
 
     if target_category is None:
         abort(404)
-    return jsonify(target_category)
+
+    plane_object = target_category.serialize()
+    plane_list = [e.serialize() for e in target_category.items]
+    plane_object['items'] = plane_list
+
+    return jsonify(plane_object)
 
 @app.route('/item/<int:item_id>/edit', methods = ['GET', 'POST'])
 def item_edit_route(item_id):
@@ -251,20 +254,29 @@ def item_route(item_id):
         abort(404)
 
     return render_template('item.html', page={
-        'title': 'Item ' + target_item['name'],
+        'title': 'Item ' + target_item.name,
         'has_sidebar': True
     }, user=user_info(), content={
-        'categories': categories,
+        'categories': get_categories(),
         'item': target_item
     })
 
-@app.route('/api/v1/item/<int:item_id>', methods = ['GET'])
+@app.route('/item/<int:item_id>.json', methods = ['GET'])
 def item_api(item_id):
     target_item = get_item(item_id)
 
     if target_item is None:
         abort(404)
-    return jsonify(target_item)
+    return jsonify(target_item.serialize())
+
+def get_categories():
+    categories = session.query(Category).all()
+    return categories
+
+def get_category(category_id):
+    target_category = session.query(Category).get(category_id)
+
+    return target_category
 
 def add_category():
     global next_category_id, categories
@@ -293,6 +305,11 @@ def delete_category(category_id):
         if category['id'] == category_id:
             del categories[index]
             break
+
+def get_item(item_id):
+    target_item = session.query(Item).get(item_id)
+
+    return target_item
 
 def add_item(category_id):
     global next_item_id, categories

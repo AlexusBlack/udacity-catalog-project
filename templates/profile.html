@@ -2,9 +2,4 @@
 {% block content %}
   <h1>Profile: {{ user.name }}</h1>
   <img src="{{ user.photo }}" alt="{{ user.name }} photo" width="250px">
-  <p>
-    API Key: <br>
-    <textarea type="text" class="form-input" cols="50" rows="1">{{ content.api_key }}</textarea><br>
-    This key required to make data modifying requests.
-  </p>
 {% endblock %}
