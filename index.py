@@ -1,6 +1,9 @@
 import os
 
 from flask import Flask, jsonify, render_template, abort, request, flash, redirect, url_for
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 from security import generate_csrf_token, get_api_key
 from orvData import categories, next_category_id, next_item_id
@@ -11,6 +14,10 @@ from auth import auth_system
 app = Flask(__name__)
 app.secret_key = 'KJKxXXPKSks75g4W'
 app.register_blueprint(auth_system)
+
+engine = create_engine('postgresql:///catalog')
+Session = sessionmaker(bind=engine)
+Base = declarative_base()
 
 @app.route('/', methods = ['GET'])
 def index_route():
