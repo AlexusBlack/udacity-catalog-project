@@ -1,9 +1,9 @@
 import os
+import sys
 
 from flask import Flask, jsonify, render_template, abort, request, flash, redirect, url_for
 
 from security import generate_csrf_token, get_api_key
-from orvData import next_category_id, next_item_id
 from tools import user_is_authorized, user_info
 
 from base import Session
@@ -129,7 +129,7 @@ def category_delete_route(category_id):
             'title': 'Delete category'
         }, user=user_info(), content={
             'csrf_token': csrf,
-            'message': 'Do you really want delete category ' + target_category['name'] + '?'
+            'message': 'Do you really want delete category ' + target_category.name + '?'
         })
 
 @app.route('/category/<int:category_id>/add', methods = ['GET', 'POST'])
@@ -243,7 +243,7 @@ def item_delete_route(item_id):
             'title': 'Delete item'
         }, user=user_info(), content={
             'csrf_token': csrf,
-            'message': 'Do you really want delete item ' + target_item['name'] + '?'
+            'message': 'Do you really want delete item ' + target_item.name + '?'
         })
 
 @app.route('/item/<int:item_id>', methods = ['GET'])
@@ -279,86 +279,59 @@ def get_category(category_id):
     return target_category
 
 def add_category():
-    global next_category_id, categories
     name = request.form['name']
-    
-    categories.append({
-        'id': next_category_id,
-        'name': name,
-        'items': []
-    })
-    next_category_id += 1
+    new_category = Category(name)
+
+    session.add(new_category)
+    session.commit()
 
 def update_category(category_id):
-    global categories
     name = request.form['name']
+    category_to_update = session.query(Category).get(category_id)
+    category_to_update.name = name
 
-    for index, category in enumerate(categories):
-        if category['id'] == category_id:
-            categories[index]['name'] = name
-            break
+    session.add(category_to_update)
+    session.commit()
 
 def delete_category(category_id):
-    global categories
-
-    for index, category in enumerate(categories):
-        if category['id'] == category_id:
-            del categories[index]
-            break
+    session.query(Category).filter(Category.id == category_id).delete()
+    session.commit()
 
 def get_item(item_id):
     target_item = session.query(Item).get(item_id)
-
     return target_item
 
 def add_item(category_id):
-    global next_item_id, categories
     name = request.form['name']
     description = request.form['description']
+    new_item = Item(name, description)
+    new_item.category_id = category_id
 
-    for index, category in enumerate(categories):
-        if category['id'] == category_id:
-            categories[index]['items'].append({
-                'id': next_item_id,
-                'name': name,
-                'description': description,
-                'author': user_info()['id']
-            })
-            break
-
-    next_item_id += 1
+    session.add(new_item)
+    session.commit()
 
 def update_item(item_id):
-    global categories
     name = request.form['name']
     description = request.form['description']
 
-    done = False
-    for category_index, category in enumerate(categories):
-        for item_index, item in enumerate(category['items']):
-            if item['id'] == item_id:
-                categories[category_index]['items'][item_index]['name'] = name
-                categories[category_index]['items'][item_index]['description'] = description
-                done = True
-                break
-        if done:
-            break
+    item_to_update = session.query(Item).get(item_id)
+    item_to_update.name = name
+    item_to_update.description = description
+
+    session.add(item_to_update)
+    session.commit()
 
 def delete_item(item_id):
-    global categories
-
-    done = False
-    for category_index, category in enumerate(categories):
-        for item_index, item in enumerate(category['items']):
-            if item['id'] == item_id:
-                del categories[category_index]['items'][item_index]
-                done = True
-                break
-        if done:
-            break
+    session.query(Item).filter(Item.id == item_id).delete()
+    session.commit()
 
 if __name__ == '__main__':
-    # for OAuth on http localhost
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-    app.debug = True #False
+    args_number = len(sys.argv)
+    if args_number > 0 and '--production' not in sys.argv:
+        print('WARNING: running in debug mode\nadd `--production` flag to run in production mode')
+        # for OAuth on http localhost
+        os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+        app.debug = True
+    else:
+        app.debug = False
     app.run(host='0.0.0.0', port=5000)
