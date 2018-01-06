@@ -18,7 +18,8 @@ app.register_blueprint(category)
 app.register_blueprint(item)
 app.register_blueprint(api)
 
-@app.route('/', methods = ['GET'])
+
+@app.route('/', methods=['GET'])
 def index_route():
     """
     Home sweet home, this is page where our journey begins
@@ -30,12 +31,13 @@ def index_route():
         'categories': get_categories()
     })
 
-@app.route('/profile', methods = ['GET'])
+
+@app.route('/profile', methods=['GET'])
 def profile_route():
     """
-    Originaly I planned to make it big and coolm with API key to update and delete stuff,
-    with nice API reference and so on.
-    Then I understood that this is overkill, 
+    Originaly I planned to make it big and coolm with API key to update
+    and delete stuff, with nice API reference and so on.
+    Then I understood that this is overkill,
     so this page is very simple and just shows user's picture.
     """
     user = user_info()
@@ -49,10 +51,12 @@ def profile_route():
         'categories': get_categories()
     })
 
+
 if __name__ == '__main__':
     args_number = len(sys.argv)
     if args_number > 0 and '--production' not in sys.argv:
-        print('WARNING: running in debug mode\nadd `--production` flag to run in production mode')
+        print('WARNING: running in debug mode\n\
+              add `--production` flag to run in production mode')
         # for OAuth on http localhost
         os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
         app.debug = True

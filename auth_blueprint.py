@@ -8,12 +8,14 @@ import googleapiclient.discovery
 from flask import Blueprint, url_for, session, redirect, flash, request
 from security import credentials_to_dict
 
-CLIENT_SECRETS_FILE = 'client_secret_701113834116-726adijgkns945m5l467eu6gu02lb18b.apps.googleusercontent.com.json'
+CLIENT_SECRETS_FILE = 'client_secret_701113834116-726adijgkns945m5l467eu\
+6gu02lb18b.apps.googleusercontent.com.json'
 SCOPES = ['profile']
 
 auth = Blueprint('auth', __name__, template_folder='templates')
 
-@auth.route('/login', methods = ['GET'])
+
+@auth.route('/login', methods=['GET'])
 def login_route():
     """
     Redirects user to Google auth link
@@ -30,7 +32,8 @@ def login_route():
 
     return redirect(authorization_url)
 
-@auth.route('/logout', methods = ['GET'])
+
+@auth.route('/logout', methods=['GET'])
 def logout_route():
     """
     Cleansup credentials from session and
@@ -40,6 +43,7 @@ def logout_route():
         del session['credentials']
     flash('You logged out')
     return redirect(url_for('index_route'))
+
 
 @auth.route('/oauth2callback')
 def oauth2callback():
@@ -66,8 +70,10 @@ def oauth2callback():
     session['credentials'] = credentials_to_dict(credentials)
 
     # requesting user info
-    service = googleapiclient.discovery.build('people', 'v1', credentials=credentials)
-    result = service.people().get(resourceName='people/me', personFields='names,photos').execute()
+    service = googleapiclient.discovery.build('people', 'v1',
+                                              credentials=credentials)
+    result = service.people().get(resourceName='people/me',
+                                  personFields='names,photos').execute()
 
     user_id = result['resourceName']
     user_name = result['names'][0]['displayName']

@@ -2,14 +2,18 @@
 Item routes
 """
 
-from flask import Blueprint, url_for, render_template, abort, flash, redirect, request
+from flask import Blueprint, url_for, render_template, abort, flash,\
+                  redirect, request
 
 from security import generate_csrf_token
-from tools import login_required, user_is_authorized, user_info, get_item, get_categories, get_category, update_item, delete_item, add_item
+from tools import login_required, user_is_authorized, user_info, get_item,\
+                  get_categories, get_category, update_item, delete_item, \
+                  add_item
 
 item = Blueprint('item', __name__, template_folder='templates')
 
-@item.route('/item/<int:item_id>/edit', methods = ['GET', 'POST'])
+
+@item.route('/item/<int:item_id>/edit', methods=['GET', 'POST'])
 @login_required
 def item_edit_route(item_id):
     """
@@ -18,7 +22,7 @@ def item_edit_route(item_id):
 
     target_item = get_item(item_id)
 
-    #checking access rights
+    # checking access rights
     if target_item.owner != user_info()['id']:
         flash('Only owner can edit item')
         return redirect(url_for('item.item_route', item_id=item_id))
@@ -47,7 +51,8 @@ def item_edit_route(item_id):
             'item': target_item
         })
 
-@item.route('/item/<int:item_id>/delete', methods = ['GET', 'POST'])
+
+@item.route('/item/<int:item_id>/delete', methods=['GET', 'POST'])
 @login_required
 def item_delete_route(item_id):
     """
@@ -56,7 +61,7 @@ def item_delete_route(item_id):
 
     target_item = get_item(item_id)
 
-    #checking access rights
+    # checking access rights
     if target_item.owner != user_info()['id']:
         flash('Only owner can delete item')
         return redirect(url_for('item.item_route', item_id=item_id))
@@ -81,10 +86,12 @@ def item_delete_route(item_id):
             'title': 'Delete item'
         }, user=user_info(), content={
             'csrf_token': csrf,
-            'message': 'Do you really want delete item ' + target_item.name + '?'
+            'message': 'Do you really want delete item '
+                       + target_item.name + '?'
         })
 
-@item.route('/item/<int:item_id>', methods = ['GET'])
+
+@item.route('/item/<int:item_id>', methods=['GET'])
 def item_route(item_id):
     """
     Route that outputs item info
@@ -102,7 +109,8 @@ def item_route(item_id):
         'item': target_item
     })
 
-@item.route('/category/<int:category_id>/add', methods = ['GET', 'POST'])
+
+@item.route('/category/<int:category_id>/add', methods=['GET', 'POST'])
 @login_required
 def item_add_route(category_id):
     """
@@ -123,7 +131,8 @@ def item_add_route(category_id):
         else:
             add_item(category_id)
             flash('Item added')
-            return redirect(url_for('category.category_route', category_id=category_id))
+            return redirect(url_for('category.category_route',
+                                    category_id=category_id))
 
     if request.method == 'GET':
         return render_template('item_edit.html', page={

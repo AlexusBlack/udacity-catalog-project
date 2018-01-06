@@ -10,6 +10,7 @@ from item import Item
 from category import Category
 from base import session
 
+
 def login_required(func):
     """
     Login decorator (middleware)
@@ -27,10 +28,6 @@ def login_required(func):
             return flask.redirect(flask.url_for('auth.login_route'))
     return check_login
 
-# def owner_only(func):
-#     @wraps(func)
-#     def check_ownership(*args, **kwargs):
-        
 
 def user_info():
     """
@@ -49,11 +46,13 @@ def user_info():
 
     return user
 
+
 def user_is_authorized():
     """
     Simple check if user is authorized
     """
     return 'credentials' in flask.session
+
 
 def get_categories():
     """
@@ -62,6 +61,7 @@ def get_categories():
     categories = session.query(Category).all()
     return categories
 
+
 def get_category(category_id):
     """
     Getting single category out of DB by id
@@ -69,6 +69,7 @@ def get_category(category_id):
     target_category = session.query(Category).get(category_id)
 
     return target_category
+
 
 def add_category():
     """
@@ -82,6 +83,7 @@ def add_category():
     session.add(new_category)
     session.commit()
 
+
 def update_category(category_id):
     """
     Updating category in DB with fields from request form
@@ -94,13 +96,16 @@ def update_category(category_id):
     session.add(category_to_update)
     session.commit()
 
+
 def delete_category(category_id):
     """
     Deleting category by id
     """
-    category_to_delete = session.query(Category).filter(Category.id == category_id).first()
+    category_to_delete = session.query(Category)\
+                                .filter(Category.id == category_id).first()
     session.delete(category_to_delete)
     session.commit()
+
 
 def get_item(item_id):
     """
@@ -108,6 +113,7 @@ def get_item(item_id):
     """
     target_item = session.query(Item).get(item_id)
     return target_item
+
 
 def add_item(category_id):
     """
@@ -123,6 +129,7 @@ def add_item(category_id):
     session.add(new_item)
     session.commit()
 
+
 def update_item(item_id):
     """
     Updating item in DB with fields from request form
@@ -137,6 +144,7 @@ def update_item(item_id):
 
     session.add(item_to_update)
     session.commit()
+
 
 def delete_item(item_id):
     """

@@ -11,7 +11,8 @@ from tools import get_categories, get_category, get_item
 
 api = Blueprint('api', __name__, template_folder='templates')
 
-@api.route('/categories.json', methods = ['GET'])
+
+@api.route('/categories.json', methods=['GET'])
 def categories_api():
     """
     Lists categories
@@ -19,7 +20,8 @@ def categories_api():
     plain_list = [e.serialize() for e in get_categories()]
     return jsonify(plain_list)
 
-@api.route('/category/<int:category_id>.json', methods = ['GET'])
+
+@api.route('/category/<int:category_id>.json', methods=['GET'])
 def category_api(category_id):
     """
     Outputs category info and items in it,
@@ -37,7 +39,8 @@ def category_api(category_id):
 
     return jsonify(plane_object)
 
-@api.route('/item/<int:item_id>.json', methods = ['GET'])
+
+@api.route('/item/<int:item_id>.json', methods=['GET'])
 def item_api(item_id):
     """
     Outputs item info,

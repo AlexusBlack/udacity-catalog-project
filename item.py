@@ -5,6 +5,7 @@ ORM mapping to items table
 from sqlalchemy import Column, String, Integer, ForeignKey
 from base import Base
 
+
 class Item(Base):
     """
     Represents single row in items table
