@@ -55,6 +55,11 @@ def category_edit_route(category_id):
 
     target_category = get_category(category_id)
 
+    #checking access rights
+    if target_category.owner != user_info()['id']:
+        flash('Only owner can edit category')
+        return redirect(url_for('category.categories_route'))
+
     if target_category is None:
         abort(404)
 
@@ -85,6 +90,11 @@ def category_delete_route(category_id):
     """
 
     target_category = get_category(category_id)
+
+    #checking access rights
+    if target_category.owner != user_info()['id']:
+        flash('Only owner can delete category')
+        return redirect(url_for('category.categories_route'))
 
     if target_category is None:
         abort(404)

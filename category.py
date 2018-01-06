@@ -14,11 +14,13 @@ class Category(Base):
     __tablename__ = 'categories'
 
     id = Column(Integer, primary_key=True)
+    owner = Column(String)
     name = Column(String)
     items = relationship('Item', cascade="all, delete")
 
-    def __init__(self, name):
+    def __init__(self, name, owner='Admin'):
         self.name = name
+        self.owner = owner
 
     # We need able convert this object to JSON for our API
     def serialize(self):

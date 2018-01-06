@@ -4,8 +4,10 @@
   {% if user.authorized %}
   <p>
     <a href="{{ url_for('item.item_add_route', category_id=content.category.id) }}" class="btn btn-primary">Add Item</a>
+    {% if user.id == content.category.owner %}
     <a href="{{ url_for('category.category_edit_route', category_id=content.category.id) }}" class="btn btn-secondary">Edit Category</a>
     <a href="{{ url_for('category.category_delete_route', category_id=content.category.id) }}" class="btn btn-danger">Delete Category</a>
+    {% endif %}
   </p>
   {% endif %}
   <p>

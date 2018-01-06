@@ -12,13 +12,15 @@ class Item(Base):
     __tablename__ = 'items'
 
     id = Column(Integer, primary_key=True)
+    owner = Column(String)
     name = Column(String)
     description = Column(String)
     category_id = Column(Integer, ForeignKey('categories.id'))
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, owner='Admin'):
         self.name = name
         self.description = description
+        self.owner = owner
 
     def serialize(self):
         """

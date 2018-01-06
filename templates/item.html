@@ -1,7 +1,7 @@
 {% extends "layout_with_sidebar.html" %}
 {% block content %}
   <h1>Item: {{ content.item.name }}</h1>
-  {% if user.authorized %}
+  {% if user.authorized and user.id == content.item.owner %}
   <p>
     <a href="{{ url_for('item.item_edit_route', item_id=content.item.id) }}" class="btn btn-secondary">Edit Item</a>
     <a href="{{ url_for('item.item_delete_route', item_id=content.item.id) }}" class="btn btn-danger">Delete Item</a>

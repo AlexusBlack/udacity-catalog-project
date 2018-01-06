@@ -15,19 +15,22 @@ def login_required(func):
     Login decorator (middleware)
     that protects route from unauthorized access
     """
-    print('wrapping')
     @wraps(func)
     def check_login(*args, **kwargs):
         """
         Checks if user logged in before executing function
         if not logged redirects to login page
         """
-        print('checking auth')
         if user_is_authorized():
             return func(*args, **kwargs)
         else:
             return flask.redirect(flask.url_for('auth.login_route'))
     return check_login
+
+# def owner_only(func):
+#     @wraps(func)
+#     def check_ownership(*args, **kwargs):
+        
 
 def user_info():
     """
@@ -73,7 +76,8 @@ def add_category():
     * better replace with arguments, to make method more independent
     """
     name = flask.request.form['name']
-    new_category = Category(name)
+    owner = user_info()['id']
+    new_category = Category(name, owner)
 
     session.add(new_category)
     session.commit()
@@ -111,8 +115,9 @@ def add_item(category_id):
     * better replace with arguments, to make method more independent
     """
     name = flask.request.form['name']
+    owner = user_info()['id']
     description = flask.request.form['description']
-    new_item = Item(name, description)
+    new_item = Item(name, description, owner)
     new_item.category_id = category_id
 
     session.add(new_item)

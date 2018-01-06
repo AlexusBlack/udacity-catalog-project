@@ -18,6 +18,11 @@ def item_edit_route(item_id):
 
     target_item = get_item(item_id)
 
+    #checking access rights
+    if target_item.owner != user_info()['id']:
+        flash('Only owner can edit item')
+        return redirect(url_for('item.item_route', item_id=item_id))
+
     if target_item is None:
         abort(404)
 
@@ -50,6 +55,11 @@ def item_delete_route(item_id):
     """
 
     target_item = get_item(item_id)
+
+    #checking access rights
+    if target_item.owner != user_info()['id']:
+        flash('Only owner can delete item')
+        return redirect(url_for('item.item_route', item_id=item_id))
 
     if target_item is None:
         abort(404)
