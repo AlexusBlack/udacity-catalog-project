@@ -74,7 +74,8 @@ def delete_category(category_id):
     """
     Deleting category by id
     """
-    session.query(Category).filter(Category.id == category_id).delete()
+    category_to_delete = session.query(Category).filter(Category.id == category_id).first()
+    session.delete(category_to_delete)
     session.commit()
 
 def get_item(item_id):

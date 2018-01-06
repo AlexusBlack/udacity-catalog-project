@@ -15,7 +15,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-    items = relationship('Item')
+    items = relationship('Item', cascade="all, delete")
 
     def __init__(self, name):
         self.name = name
