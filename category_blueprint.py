@@ -5,7 +5,7 @@ Routes for categories
 from flask import Blueprint, url_for, render_template, abort, flash, redirect, request
 
 from security import generate_csrf_token
-from tools import user_is_authorized, user_info, get_categories, get_category, add_category, update_category, delete_category
+from tools import login_required, user_is_authorized, user_info, get_categories, get_category, add_category, update_category, delete_category
 
 category = Blueprint('category', __name__, template_folder='templates')
 
@@ -20,14 +20,12 @@ def categories_route():
         'categories': get_categories()
     })
 
-@category.route('/category/add', methods = ['GET', 'POST'])
+@category.route('/category/add', methods=['GET', 'POST'])
+@login_required
 def category_add_route():
     """
     Add new category to data base
     """
-    # user must be authorized
-    if not user_is_authorized():
-        return redirect(url_for('auth_system.login_route'))
 
     # adding some protection
     csrf = generate_csrf_token()
@@ -49,13 +47,11 @@ def category_add_route():
         })
 
 @category.route('/category/<int:category_id>/edit', methods = ['GET', 'POST'])
+@login_required
 def category_edit_route(category_id):
     """
     Updating category info
     """
-    # user must be authorized
-    if not user_is_authorized():
-        return redirect(url_for('auth_system.login_route'))
 
     target_category = get_category(category_id)
 
@@ -82,13 +78,11 @@ def category_edit_route(category_id):
         })
 
 @category.route('/category/<int:category_id>/delete', methods = ['GET', 'POST'])
+@login_required
 def category_delete_route(category_id):
     """
     Deleting category from DB
     """
-    # user must be authorized
-    if not user_is_authorized():
-        return redirect(url_for('auth_system.login_route'))
 
     target_category = get_category(category_id)
 

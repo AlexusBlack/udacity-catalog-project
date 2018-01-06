@@ -3,11 +3,31 @@ Set of tools that provides us additional abstration layer on top of database
 and other useful functions
 """
 
+from functools import wraps
 import flask
 
 from item import Item
 from category import Category
 from base import session
+
+def login_required(func):
+    """
+    Login decorator (middleware)
+    that protects route from unauthorized access
+    """
+    print('wrapping')
+    @wraps(func)
+    def check_login(*args, **kwargs):
+        """
+        Checks if user logged in before executing function
+        if not logged redirects to login page
+        """
+        print('checking auth')
+        if user_is_authorized():
+            return func(*args, **kwargs)
+        else:
+            return flask.redirect(flask.url_for('auth.login_route'))
+    return check_login
 
 def user_info():
     """

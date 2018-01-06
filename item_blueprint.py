@@ -5,18 +5,16 @@ Item routes
 from flask import Blueprint, url_for, render_template, abort, flash, redirect, request
 
 from security import generate_csrf_token
-from tools import user_is_authorized, user_info, get_item, get_categories, get_category, update_item, delete_item, add_item
+from tools import login_required, user_is_authorized, user_info, get_item, get_categories, get_category, update_item, delete_item, add_item
 
 item = Blueprint('item', __name__, template_folder='templates')
 
 @item.route('/item/<int:item_id>/edit', methods = ['GET', 'POST'])
+@login_required
 def item_edit_route(item_id):
     """
     Route to edit item
     """
-    # user must be authorised
-    if not user_is_authorized():
-        return redirect(url_for('auth_system.login_route'))
 
     target_item = get_item(item_id)
 
@@ -45,13 +43,11 @@ def item_edit_route(item_id):
         })
 
 @item.route('/item/<int:item_id>/delete', methods = ['GET', 'POST'])
+@login_required
 def item_delete_route(item_id):
     """
     Route to delete item
     """
-    # user must be authorized
-    if not user_is_authorized():
-        return redirect(url_for('auth_system.login_route'))
 
     target_item = get_item(item_id)
 
@@ -97,13 +93,11 @@ def item_route(item_id):
     })
 
 @item.route('/category/<int:category_id>/add', methods = ['GET', 'POST'])
+@login_required
 def item_add_route(category_id):
     """
     Route to add new item
     """
-    # user must be authorised
-    if not user_is_authorized():
-        return redirect(url_for('auth_system.login_route'))
 
     target_category = get_category(category_id)
 
