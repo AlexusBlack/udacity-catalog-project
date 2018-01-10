@@ -2,14 +2,16 @@
 Routes responsible for authorisation and integration with Google OAuth
 """
 
+import os
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 
 from flask import Blueprint, url_for, session, redirect, flash, request
 from security import credentials_to_dict
 
-CLIENT_SECRETS_FILE = 'client_secret_701113834116-726adijgkns945m5l467eu\
-6gu02lb18b.apps.googleusercontent.com.json'
+PROJECT_DIR = os.path.dirname(__file__)
+CLIENT_SECRETS_FILE = os.path.join(PROJECT_DIR, 'client_secret_701113834116-726adijgkns945m5l467eu\
+6gu02lb18b.apps.googleusercontent.com.json')
 SCOPES = ['profile']
 
 auth = Blueprint('auth', __name__, template_folder='templates')
