@@ -6,8 +6,8 @@ Welcome to The Orville database project. It written in python3 using PostgreSQL 
 Please make sure that you have all required packages installed:
 
 - flask
-- google_auth_oauthlib
-- googleapiclient
+- google-auth-httplib2
+- google-api-python-client
 - sqlalchemy
 
 And you need python3 for sure and PostgreSQL installed, you can use Udacity virtual machine for Vagrant for it. 
